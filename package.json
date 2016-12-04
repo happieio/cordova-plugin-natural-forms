@@ -1,0 +1,24 @@
+{
+  "name": "cordova-plugin-naturalfroms",
+  "version": "0.1.0",
+  "description": "natural forms integration for ios and android",
+  "cordova": {
+    "id": "cordova-plugin-naturalfroms",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "keywords": [
+    "cordova",
+    "startapp",
+    "lampa",
+	"extra",
+	"extrafields",
+	"hasextra",
+    "cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "license": "MIT"
+}

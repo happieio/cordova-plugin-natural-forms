@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+	id="cordova-plugin-naturalfroms"
+	version="0.1.0">
+
+    <name>Cordova NaturalForms</name>
+    <description>send data to natural forms from a cordova app.</description>
+    <license>MIT</license>
+    <keywords>cordova,natural,forms,naturalforms</keywords>
+
+    <js-module src="www/naturalforms.js" name="NaturalForms">
+        <clobbers target="NaturalForms" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="NaturalForms">
+                <param name="android-package" value="io.happie.naturalforms.NaturalForms"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/NaturalForms.java" target-dir="src/io/happie/naturalforms" />
+    </platform>
+
+
+	<platform name="ios">
+		<config-file target="config.xml" parent="/*">
+			<feature name="NaturalForms">
+				<param name="ios-package" value="NaturalForms"/>
+			</feature>
+		</config-file>
+		
+		<header-file src="src/ios/NaturalForms.h"/>
+		<source-file src="src/ios/NaturalForms.m"/>
+	</platform>
+
+
+</plugin>
