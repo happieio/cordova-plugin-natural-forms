@@ -40,7 +40,7 @@ public class NaturalForms extends CordovaPlugin {
 		nfIntent.setClassName("net.expedata.naturalforms", "net.expedata.naturalforms.ui.CsvImportActivity"); // , csvImport.name);
 		// startActivity(nfIntent);
 
-		final startApp plugin = this;
+		final NaturalForms plugin = this;
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
 				cordova.startActivityForResult(plugin, nfIntent, 0);
