@@ -24,7 +24,7 @@ public class NaturalForms extends CordovaPlugin {
 		final CallbackContext finalCallBack = callback;
 
 		if(nfIntent == null) {
-			callback.error("Please install naturalForms and try again.");
+			callback.error("Please install naturalForms");
 		}
 
 		File csv = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/JobNimbus/", "data.csv");
@@ -33,7 +33,7 @@ public class NaturalForms extends CordovaPlugin {
 			fw.write(args.getString(0));
 			fw.close();
 		} catch(IOException ioe){
-			callback.error("Could not save transport file.");
+			callback.error("Could not save naturalForms data.");
 		}
 
 		nfIntent.setData(Uri.fromFile(csv));
