@@ -41,14 +41,14 @@ public class NaturalForms extends CordovaPlugin {
                 if (!JNDir.mkdirs()) {
                     //callback.error("Could not create naturalForms data.");
                 }
-
+                String fileName = "/nf-data" + System.currentTimeMillis() + ".csv";
                 try {
-                    FileOutputStream overWrite = new FileOutputStream(JNDir.toString() + "/nf-data.csv", false);
+                    FileOutputStream overWrite = new FileOutputStream(JNDir.toString() + fileName, false);
                     overWrite.write(args.getString(0).getBytes());
                     overWrite.flush();
                     overWrite.close();
 
-                    LaunchIntent.setDataAndType(Uri.parse(JNDir.toString() + "/nf-data.csv"), "text/csv");
+                    LaunchIntent.setDataAndType(Uri.parse("file://" + JNDir.toString() + fileName), "text/csv");
 
                     ResolveInfo best = getPackageInfo(LaunchIntent, "net.expedata.naturalforms");
 
