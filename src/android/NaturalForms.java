@@ -1,5 +1,6 @@
 package io.happie.naturalforms;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.ActivityNotFoundException;
@@ -14,7 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,36 +26,40 @@ public class NaturalForms extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback) throws JSONException {
         try {
-            //PackageManager manager = cordova.getActivity().getApplicationContext().getPackageManager();
-            //LaunchIntent = manager.getLaunchIntentForPackage(params.getString("net.expedata.naturalforms"));
-
-            //LaunchIntent = new Intent("net.expedata.naturalforms.ui.CsvImportActivity");
-
-            Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
-
+            PackageManager manager = cordova.getActivity().getApplicationContext().getPackageManager();
+            Intent LaunchIntent = manager.getLaunchIntentForPackage("net.expedata.naturalforms");//.ui.CsvImportActivity
+            //Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
             if (LaunchIntent == null) {
                 callback.error("Could not find natural forms");
                 return true;
             }
 
-            File csv = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/JobNimbus/", "data.csv");
-            try {
-                FileWriter fw = new FileWriter(csv);
-                fw.write(args.getString(0));
-                fw.close();
-            } catch (IOException ioe) {
-                callback.error("Could not save naturalForms data.");
-            }
+            String state = Environment.getExternalStorageState();
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
 
-            LaunchIntent.setDataAndType(Uri.fromFile(csv), "text/csv");
+                File JNDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "JobNimbus");
+                if (!JNDir.mkdirs()) {
+                    //callback.error("Could not create naturalForms data.");
+                }
 
-            ResolveInfo best = getPackageInfo(LaunchIntent, "net.expedata.naturalforms");
-            if (best == null) {
-                callback.error("Please Install naturalFORMS");
-            } else {
-                LaunchIntent.setClassName(best.activityInfo.packageName, best.activityInfo.name);
-                cordova.getActivity().startActivity(LaunchIntent);
-            }
+                try {
+                    FileOutputStream overWrite = new FileOutputStream(JNDir.toString() + "/nf-data.csv", false);
+                    overWrite.write(args.getString(0).getBytes());
+                    overWrite.flush();
+                    overWrite.close();
+
+                    LaunchIntent.setDataAndType(Uri.parse(JNDir.toString() + "/nf-data.csv"), "text/csv");
+
+                    ResolveInfo best = getPackageInfo(LaunchIntent, "net.expedata.naturalforms");
+
+                    LaunchIntent.setClassName(best.activityInfo.packageName, "net.expedata.naturalforms.ui.CsvImportActivity");
+
+                    cordova.getActivity().startActivity(LaunchIntent);
+
+                } catch (IOException ioe) {
+                    callback.error("Could not save naturalForms data.");
+                }
+            } else callback.error("cannot access external storage.");
 
             callback.success();
         } catch (ActivityNotFoundException e) {
@@ -64,13 +69,11 @@ public class NaturalForms extends CordovaPlugin {
     }
 
     private ResolveInfo getPackageInfo(final Intent intent, final String packageName) {
-        Log.e(TAG, "!!!!!!getPackageInfo");
         final PackageManager pm = cordova.getActivity().getPackageManager();
         final List<ResolveInfo> matches = pm.queryIntentActivities(intent, 0);
 
         ResolveInfo best = null;
         for (final ResolveInfo info : matches) {
-            Log.e(TAG, info.activityInfo.packageName);
             if (info.activityInfo.packageName.contains(packageName)) {
                 best = info;
             }
