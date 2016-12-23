@@ -33,9 +33,7 @@ public class NaturalForms extends CordovaPlugin {
 
             String state = Environment.getExternalStorageState();
             if (Environment.MEDIA_MOUNTED.equals(state)) {
-
-                File JNDir = new File(cordova.getActivity().getApplicationContext().getCacheDir(), "JobNimbus");
-
+                File JNDir = new File(Environment.getExternalStorageDirectory(), "JobNimbus");
                 if(JNDir.mkdirs()){}
                 String fileName = "/nf-data" + System.currentTimeMillis() + ".csv";
                 try {
@@ -43,9 +41,6 @@ public class NaturalForms extends CordovaPlugin {
                     overWrite.write(args.getString(0).getBytes());
                     overWrite.flush();
                     overWrite.close();
-
-                    File csv = new File(JNDir.toString() + fileName);
-                    csv.setReadable( true, false );
 
                     LaunchIntent.setDataAndType(Uri.parse("file://" + JNDir.toString() + fileName), "text/csv");
 
