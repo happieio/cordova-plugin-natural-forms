@@ -1,13 +1,11 @@
 package io.happie.naturalforms;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.ActivityNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.os.Environment;
 import android.net.Uri;
-import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -27,10 +25,9 @@ public class NaturalForms extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callback) throws JSONException {
         try {
             PackageManager manager = cordova.getActivity().getApplicationContext().getPackageManager();
-            Intent LaunchIntent = manager.getLaunchIntentForPackage("net.expedata.naturalforms");//.ui.CsvImportActivity
-            //Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
+            Intent LaunchIntent = manager.getLaunchIntentForPackage("net.expedata.naturalforms");
             if (LaunchIntent == null) {
-                callback.error("Could not find natural forms");
+                callback.error("naturalForms not installed");
                 return true;
             }
 
@@ -38,9 +35,7 @@ public class NaturalForms extends CordovaPlugin {
             if (Environment.MEDIA_MOUNTED.equals(state)) {
 
                 File JNDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "JobNimbus");
-                if (!JNDir.mkdirs()) {
-                    //callback.error("Could not create naturalForms data.");
-                }
+                if(JNDir.mkdirs()){}
                 String fileName = "/nf-data" + System.currentTimeMillis() + ".csv";
                 try {
                     FileOutputStream overWrite = new FileOutputStream(JNDir.toString() + fileName, false);
@@ -57,13 +52,16 @@ public class NaturalForms extends CordovaPlugin {
                     cordova.getActivity().startActivity(LaunchIntent);
 
                 } catch (IOException ioe) {
-                    callback.error("Could not save naturalForms data.");
+                    callback.error("Could not send naturalForms data");
                 }
-            } else callback.error("cannot access external storage.");
+                catch(Exception e){
+                    callback.error("Failed to launch naturalForms");
+                }
+            } else callback.error("Cannot access external storage");
 
             callback.success();
         } catch (ActivityNotFoundException e) {
-            callback.error("Could not start naturalForms");
+            callback.error("naturalForms not installed");
         }
         return true;
     }
