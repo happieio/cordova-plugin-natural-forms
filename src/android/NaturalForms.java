@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.os.Environment;
 import android.net.Uri;
+import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class NaturalForms extends CordovaPlugin {
 
-    public static final String TAG = "NaturalForms";
+    public static final String TAG = "NaturalFormsPlugin";
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback) throws JSONException {
@@ -32,6 +33,7 @@ public class NaturalForms extends CordovaPlugin {
             }
 
             File nfData = new File(cordova.getActivity().getExternalCacheDir() + File.separator + "nf-data" + System.currentTimeMillis() + ".csv");
+            Log.w(TAG, "PATH: " + nfData.toString());
             try {
                 nfData.createNewFile();
                 FileOutputStream overWrite = new FileOutputStream(nfData.toString(), false);
