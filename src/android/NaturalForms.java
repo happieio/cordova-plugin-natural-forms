@@ -31,32 +31,27 @@ public class NaturalForms extends CordovaPlugin {
                 return true;
             }
 
-            String state = Environment.getExternalStorageState();
-            if (Environment.MEDIA_MOUNTED.equals(state)) {
-                File JNDir = new File(Environment.getExternalStorageDirectory(), "JobNimbus");
-                if(JNDir.mkdirs()){}
-                String fileName = "/nf-data" + System.currentTimeMillis() + ".csv";
-                try {
-                    FileOutputStream overWrite = new FileOutputStream(JNDir.toString() + fileName, false);
-                    overWrite.write(args.getString(0).getBytes());
-                    overWrite.flush();
-                    overWrite.close();
+            File nfData = new File(cordova.getActivity().getExternalCacheDir() + File.separator + "nf-data" + System.currentTimeMillis() + ".csv");
+            try {
+                nfData.createNewFile();
+                FileOutputStream overWrite = new FileOutputStream(nfData.toString(), false);
+                overWrite.write(args.getString(0).getBytes());
+                overWrite.flush();
+                overWrite.close();
 
-                    LaunchIntent.setDataAndType(Uri.parse("file://" + JNDir.toString() + fileName), "text/csv");
+                LaunchIntent.setDataAndType(Uri.parse("file://" + nfData.toString()), "text/csv");
 
-                    ResolveInfo best = getPackageInfo(LaunchIntent, "net.expedata.naturalforms");
+                ResolveInfo best = getPackageInfo(LaunchIntent, "net.expedata.naturalforms");
 
-                    LaunchIntent.setClassName(best.activityInfo.packageName, "net.expedata.naturalforms.ui.CsvImportActivity");
+                LaunchIntent.setClassName(best.activityInfo.packageName, "net.expedata.naturalforms.ui.CsvImportActivity");
 
-                    cordova.getActivity().startActivity(LaunchIntent);
+                cordova.getActivity().startActivity(LaunchIntent);
 
-                } catch (IOException ioe) {
-                    callback.error("Could not send naturalForms data");
-                }
-                catch(Exception e){
-                    callback.error("Failed to launch naturalForms");
-                }
-            } else callback.error("Cannot access external storage");
+            } catch (IOException ioe) {
+                callback.error("Could not send naturalForms data");
+            } catch (Exception e) {
+                callback.error("Failed to launch naturalForms");
+            }
 
             callback.success();
         } catch (ActivityNotFoundException e) {
