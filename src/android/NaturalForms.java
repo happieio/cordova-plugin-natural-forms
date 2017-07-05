@@ -49,10 +49,10 @@ public class NaturalForms extends CordovaPlugin {
 
                 cordova.getActivity().startActivity(LaunchIntent);
 
-            } catch (IOException ioe) {
-                callback.error("Could not send naturalForms data");
+            } catch (IOException e) {
+                callback.error(e.getMessage());
             } catch (Exception e) {
-                callback.error("Failed to launch naturalForms");
+                callback.error(e.getMessage());
             }
 
             callback.success();
