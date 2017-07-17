@@ -41,6 +41,8 @@ public class NaturalForms extends CordovaPlugin {
                 overWrite.flush();
                 overWrite.close();
 
+                LaunchIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                 LaunchIntent.setDataAndType(Uri.parse("file://" + nfData.toString()), "text/csv");
 
                 ResolveInfo best = getPackageInfo(LaunchIntent, "net.expedata.naturalforms");
