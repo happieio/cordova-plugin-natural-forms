@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.ActivityNotFoundException;
 import android.content.pm.ResolveInfo;
-import android.os.Environment;
 import android.net.Uri;
 import android.util.Log;
 
@@ -17,6 +16,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+import static android.support.v4.content.FileProvider.getUriForFile;
 
 public class NaturalForms extends CordovaPlugin {
 
@@ -32,8 +33,16 @@ public class NaturalForms extends CordovaPlugin {
                 return true;
             }
 
-            File nfData = new File(cordova.getActivity().getExternalCacheDir() + File.separator + "nf-data" + System.currentTimeMillis() + ".csv");
+            File nfCache = new File(cordova.getActivity().getExternalCacheDir() + "/nf");
+
+            //ensure the nf directory exists
+            if (nfCache.mkdirs()) Log.d(TAG, "media directory created");
+            else Log.d(TAG, "media directory already created");
+
+            File nfData = new File(cordova.getActivity().getExternalCacheDir() + File.separator + "nf" + File.separator + "nf-data" + System.currentTimeMillis() + ".csv");
+
             Log.w(TAG, "PATH: " + nfData.toString());
+
             try {
                 nfData.createNewFile();
                 FileOutputStream overWrite = new FileOutputStream(nfData.toString(), false);
@@ -41,9 +50,11 @@ public class NaturalForms extends CordovaPlugin {
                 overWrite.flush();
                 overWrite.close();
 
+                Uri contentUri = getUriForFile(cordova.getActivity().getApplicationContext(), "android.support.v4.content.FileProvider", nfData);
+
                 LaunchIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                LaunchIntent.setDataAndType(Uri.parse("file://" + nfData.toString()), "text/csv");
+                LaunchIntent.setDataAndType(contentUri, "text/csv");
 
                 ResolveInfo best = getPackageInfo(LaunchIntent, "net.expedata.naturalforms");
 
