@@ -33,13 +33,7 @@ public class NaturalForms extends CordovaPlugin {
                 return true;
             }
 
-            File nfCache = new File(cordova.getActivity().getExternalCacheDir() + "/nf");
-
-            //ensure the nf directory exists
-            if (nfCache.mkdirs()) Log.d(TAG, "media directory created");
-            else Log.d(TAG, "media directory already created");
-
-            File nfData = new File(cordova.getActivity().getExternalCacheDir() + File.separator + "nf" + File.separator + "nf-data" + System.currentTimeMillis() + ".csv");
+            File nfData = new File(cordova.getActivity().getCacheDir() + File.separator + "nf-data" + System.currentTimeMillis() + ".csv");
 
             Log.w(TAG, "PATH: " + nfData.toString());
 
@@ -50,11 +44,11 @@ public class NaturalForms extends CordovaPlugin {
                 overWrite.flush();
                 overWrite.close();
 
-                Uri contentUri = getUriForFile(cordova.getActivity().getApplicationContext(), "android.support.v4.content.FileProvider", nfData);
-
-                LaunchIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri contentUri = getUriForFile(cordova.getActivity().getApplicationContext(), "com.jobnimbus.JobNimbus2.provider", nfData);
 
                 LaunchIntent.setDataAndType(contentUri, "text/csv");
+
+                LaunchIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 ResolveInfo best = getPackageInfo(LaunchIntent, "net.expedata.naturalforms");
 
